@@ -30,8 +30,7 @@ public class L530TileService extends TileService {
             return;
         }
 
-        getQsTile().setState(Tile.STATE_UNAVAILABLE);
-        getQsTile().updateTile();
+        setTileState(Tile.STATE_UNAVAILABLE, null);
 
         executor.execute(() -> {
             try {
@@ -39,22 +38,16 @@ public class L530TileService extends TileService {
                 boolean current = k.getPower();
                 k.setPower(!current);
                 boolean actual = k.getPower();
-
-                getQsTile().setState(actual ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
-                getQsTile().setLabel("L530");
-                getQsTile().setIcon(Icon.createWithResource(this, com.bbbun.tapol530.R.drawable.ic_tile));
-                getQsTile().updateTile();
+                setTileState(actual ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE, "L530");
             } catch (Exception e) {
-                getQsTile().setState(Tile.STATE_UNAVAILABLE);
-                getQsTile().updateTile();
+                setTileState(Tile.STATE_UNAVAILABLE, null);
             }
         });
     }
 
     private void refreshState() {
         if (!Prefs.configured(this)) {
-            getQsTile().setState(Tile.STATE_INACTIVE);
-            getQsTile().updateTile();
+            setTileState(Tile.STATE_INACTIVE, null);
             return;
         }
 
@@ -62,15 +55,22 @@ public class L530TileService extends TileService {
             try {
                 KlapV2 k = new KlapV2(Prefs.ip(this), Prefs.email(this), Prefs.password(this));
                 boolean on = k.getPower();
-                getQsTile().setState(on ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
-                getQsTile().setLabel("L530");
-                getQsTile().setIcon(Icon.createWithResource(this, R.drawable.ic_tile));
-                getQsTile().updateTile();
+                setTileState(on ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE, "L530");
             } catch (Exception e) {
-                getQsTile().setState(Tile.STATE_UNAVAILABLE);
-                getQsTile().updateTile();
+                setTileState(Tile.STATE_UNAVAILABLE, null);
             }
         });
+    }
+
+    private void setTileState(int state, String label) {
+        Tile tile = getQsTile();
+        if (tile == null) return;
+        tile.setState(state);
+        if (label != null) {
+            tile.setLabel(label);
+            tile.setIcon(Icon.createWithResource(this, R.drawable.ic_tile));
+        }
+        tile.updateTile();
     }
 
     @Override
