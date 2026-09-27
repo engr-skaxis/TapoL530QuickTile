@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.bbbbun.tapol530"
+    namespace = "com.bbbun.tapol530"
     compileSdk = 35
 
     defaultConfig {
