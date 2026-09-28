@@ -20,17 +20,14 @@
         </activity>
 
         <service
-    android:name=".L530TileService"
-    android:icon="@drawable/ic_tile"
-    android:label="L530"
-    android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
-    android:exported="true">
-    <intent-filter>
-        <action android:name="android.service.quicksettings.action.QS_TILE" />
-    </intent-filter>
-    <meta-data
-        android:name="android.service.quicksettings.ACTIVE_TILE"
-        android:value="true" />
-</service>
+            android:name=".L530TileService"
+            android:label="L530"
+            android:icon="@drawable/ic_tile"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
     </application>
 </manifest>
