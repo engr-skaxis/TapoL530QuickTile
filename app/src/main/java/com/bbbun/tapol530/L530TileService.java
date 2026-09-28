@@ -13,6 +13,12 @@ public class L530TileService extends TileService {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Override
+    public void onTileAdded() {
+        super.onTileAdded();
+        setTileState(Tile.STATE_INACTIVE);
+    }
+
+    @Override
     public void onStartListening() {
         super.onStartListening();
         refreshState();
@@ -30,7 +36,7 @@ public class L530TileService extends TileService {
             return;
         }
 
-        setTileState(Tile.STATE_UNAVAILABLE, null);
+        setTileState(Tile.STATE_UNAVAILABLE);
 
         executor.execute(() -> {
             try {
@@ -38,16 +44,16 @@ public class L530TileService extends TileService {
                 boolean current = k.getPower();
                 k.setPower(!current);
                 boolean actual = k.getPower();
-                setTileState(actual ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE, "L530");
+                setTileState(actual ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
             } catch (Exception e) {
-                setTileState(Tile.STATE_UNAVAILABLE, null);
+                setTileState(Tile.STATE_UNAVAILABLE);
             }
         });
     }
 
     private void refreshState() {
         if (!Prefs.configured(this)) {
-            setTileState(Tile.STATE_INACTIVE, null);
+            setTileState(Tile.STATE_INACTIVE);
             return;
         }
 
@@ -55,21 +61,19 @@ public class L530TileService extends TileService {
             try {
                 KlapV2 k = new KlapV2(Prefs.ip(this), Prefs.email(this), Prefs.password(this));
                 boolean on = k.getPower();
-                setTileState(on ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE, "L530");
+                setTileState(on ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
             } catch (Exception e) {
-                setTileState(Tile.STATE_UNAVAILABLE, null);
+                setTileState(Tile.STATE_UNAVAILABLE);
             }
         });
     }
 
-    private void setTileState(int state, String label) {
+    private void setTileState(int state) {
         Tile tile = getQsTile();
         if (tile == null) return;
         tile.setState(state);
-        if (label != null) {
-            tile.setLabel(label);
-            tile.setIcon(Icon.createWithResource(this, R.drawable.ic_tile));
-        }
+        tile.setLabel("L530");
+        tile.setIcon(Icon.createWithResource(this, R.drawable.ic_tile));
         tile.updateTile();
     }
 
